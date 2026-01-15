@@ -6,15 +6,15 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 18:47:13 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/14 18:51:40 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/15 17:15:27 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_redir *ms_redir_new(t_redir_type type, char *word)
+t_redir	*ms_redir_new(t_redir_type type, char *word)
 {
-	t_redir *node;
+	t_redir	*node;
 
 	node = malloc(sizeof(t_redir));
 	if (!node)
@@ -24,10 +24,11 @@ t_redir *ms_redir_new(t_redir_type type, char *word)
 	node->next = NULL;
 	return (node);
 }
-void ms_redir_add_back(t_redir **list, t_redir *new_node)
+
+void	ms_redir_add_back(t_redir **list, t_redir *new_node)
 {
-	t_redir *last;
-	
+	t_redir	*last;
+
 	if (!list || !new_node)
 		return ;
 	if (!*list)
@@ -40,10 +41,11 @@ void ms_redir_add_back(t_redir **list, t_redir *new_node)
 		last = last->next;
 	last->next = new_node;
 }
-void ms_redir_clear(t_redir **list)
+
+void	ms_redir_clear(t_redir **list)
 {
-	t_redir *node;
-	t_redir *next;
+	t_redir	*node;
+	t_redir	*next;
 
 	if (!list)
 		return ;
@@ -57,9 +59,10 @@ void ms_redir_clear(t_redir **list)
 	}
 	*list = NULL;
 }
-t_simple_cmd *ms_simple_cmd_new(void)
+
+t_simple_cmd	*ms_simple_cmd_new(void)
 {
-	t_simple_cmd *cmd;
+	t_simple_cmd	*cmd;
 
 	cmd = malloc(sizeof(t_simple_cmd));
 	if (!cmd)
@@ -68,9 +71,10 @@ t_simple_cmd *ms_simple_cmd_new(void)
 	cmd->redir = NULL;
 	return (cmd);
 }
-void ms_simple_cmd_clear(t_simple_cmd **cmd)
+
+void	ms_simple_cmd_clear(t_simple_cmd **cmd)
 {
-	int index;
+	int	index;
 
 	if (!cmd || !*cmd)
 		return ;

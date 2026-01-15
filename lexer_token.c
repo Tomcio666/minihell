@@ -6,41 +6,75 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 18:41:36 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/14 18:59:25 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/15 18:44:11 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token *ms_token_new(t_token_type type, char *value) 
+static char	*ms_strdup(const char *src)
 {
-	t_token *token;
+	size_t	len;
+	size_t	index;
+	char	*copy;
+
+	if (!src)
+		return (NULL);
+	len = 0;
+	while (src[len])
+		len++;
+	copy = malloc(sizeof(char) * (len + 1));
+	if (!copy)
+		return (NULL);
+	index = 0;
+	while (index < len)
+	{
+		copy[index] = src[index];
+		index++;
+	}
+	copy[index] = '\0';
+	return (copy);
+}
+
+t_token	*ms_token_new(t_token_type type, char *value)
+{
+	t_token	*token;
+	char	*dup;
 
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
+	dup = NULL;
+	if (value)
+	{
+		dup = ms_strdup(value);
+		if (!dup)
+			return (free(token), NULL);
+	}
 	token->type = type;
-	token->value = value;
+	token->value = dup;
 	token->next = NULL;
 	return (token);
 }
-void ms_token_add_back(t_token **list, t_token *new_node)
+
+void	ms_token_add_back(t_token **list, t_token *new_node)
 {
-	t_token *last;
-	
+	t_token	*last;
+
 	if (!list || !new_node)
 		return ;
-	if (*list)
+	if (!*list)
 		return (*list = new_node);
 	last = *list;
 	while (last->next)
 		last = last->next;
 	last->next = new_node;
 }
-void ms_token_clear(t_token **list)
+
+void	ms_token_clear(t_token **list)
 {
-	t_token *node;
-	t_token *next;
+	t_token	*node;
+	t_token	*next;
 
 	if (!list)
 		return ;
