@@ -10,7 +10,18 @@ INCLUDES = -I. -I$(LIBFT_DIR)
 LIBS = -lreadline -lncurses
 
 SRCS =	main.c \
-	pwd.c
+	pwd.c \
+	lexer.c \
+	lexer_utils.c \
+	lexer_word.c \
+	lexer_ops.c \
+	lexer_token.c \
+	lexer_debug.c \
+	parser.c \
+	parser_cmd.c \
+	parser_utils.c \
+	ast_utils.c \
+	cmd_utils.c
 # Add each source file (relative path) to the SRCS list above.
 
 OBJS = $(SRCS:.c=.o)

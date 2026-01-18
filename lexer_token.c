@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 18:41:36 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/15 18:44:11 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/18 11:02:58 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*ms_strdup(const char *src)
 	return (copy);
 }
 
-t_token	*ms_token_new(t_token_type type, char *value)
+t_token	*ms_token_new(t_token_type type, const char *value)
 {
 	t_token	*token;
 	char	*dup;
@@ -49,7 +49,10 @@ t_token	*ms_token_new(t_token_type type, char *value)
 	{
 		dup = ms_strdup(value);
 		if (!dup)
-			return (free(token), NULL);
+		{
+			free(token);
+			return (NULL);
+		}
 	}
 	token->type = type;
 	token->value = dup;
@@ -64,7 +67,10 @@ void	ms_token_add_back(t_token **list, t_token *new_node)
 	if (!list || !new_node)
 		return ;
 	if (!*list)
-		return (*list = new_node);
+	{
+		*list = new_node;
+		return ;
+	}
 	last = *list;
 	while (last->next)
 		last = last->next;
