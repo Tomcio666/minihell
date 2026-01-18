@@ -21,7 +21,8 @@ SRCS =	main.c \
 	parser_cmd.c \
 	parser_utils.c \
 	ast_utils.c \
-	cmd_utils.c
+	cmd_utils.c \
+	executor.c
 # Add each source file (relative path) to the SRCS list above.
 
 OBJS = $(SRCS:.c=.o)

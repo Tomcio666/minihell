@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:14:48 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/18 11:27:09 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,5 +133,7 @@ int				ms_parser_expect_word(t_parser *parser, char **out);
 int				ms_parser_consume(t_parser *parser, t_token_type type);
 int				ms_parser_is_redir(t_token_type type);
 int				ms_parser_token_is_word_or_redir(t_token_type type);
+
+int				ms_execute_ast(t_ast *node);
 
 #endif
