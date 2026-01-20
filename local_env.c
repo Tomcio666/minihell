@@ -12,18 +12,19 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 char	*trim_env(char *env)
 {
-	int	index;
+	int	i;
 
-	index = 0;
-	while (env[index] && env[index] != '=')
-		index++;
-	if (!env[index])
-		return (env + index);
-	return (env + index + 1);
+	i = 0;
+	if(ft_strchr(env, '='))
+	{
+		while (env[i] && env[i] != '=')
+			i++;
+		return (&env[i + 1]);
+	}
+	return (NULL);
 }
 
 void	local_env_clear(t_shell *shell)
