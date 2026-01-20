@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 19:38:54 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/01/20 16:35:56 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 19:10:38 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,26 @@ static int	ms_export_assign(t_shell *shell, char *arg)
 	char	*equal;
 	char	*name;
 	int		status;
+	char	**slot;
 
 	if (!ms_is_valid_name(arg))
 		return (ft_putstr_fd("export: not valid\n", 2), 1);
 	equal = ft_strchr(arg, '=');
 	if (!equal)
+	{
+		slot = get_env(arg, shell);
+		if (slot)
+			return (0);
 		return (ms_env_set(shell, arg, ""), 0);
+	}
 	name = ft_substr(arg, 0, equal - arg);
 	if (!name)
 		return (1);
 	status = ms_env_set(shell, name, equal + 1);
 	free(name);
-	return (status == 1 ? 0 : 1);
+	if (status == 1)
+		return (0);
+	return (1);
 }
 
 int	export_cmd(t_shell *shell, t_simple_cmd *cmd)
