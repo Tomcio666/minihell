@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:27:09 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 16:42:40 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,19 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <dirent.h>
+# include <string.h>
+# include <errno.h>
+# include <termios.h>
+# include <sys/ioctl.h>
+# include <termcap.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <stdbool.h>
-# include <fcntl.h>
+# include "libft/libft.h"
 
 typedef enum e_token_type
 {
@@ -98,7 +107,7 @@ typedef struct s_shell
 typedef struct s_parser
 {
 	t_token	*current;
-}t_parser;
+}	t_parser;
 
 t_token			*ms_token_new(t_token_type type, const char *value);
 void			ms_token_add_back(t_token **list, t_token *new_node);
@@ -118,8 +127,6 @@ void			ms_ast_attach_children(t_ast *parent, t_ast *left, t_ast *right);
 void			ms_ast_set_command(t_ast *node, t_simple_cmd *command);
 void			ms_ast_clear(t_ast **node);
 
-int				pwd_command(void);
-
 t_token			*ms_lexer(const char *input);
 int				ms_is_space(char c);
 int				ms_is_operator(char c);
@@ -134,6 +141,21 @@ int				ms_parser_consume(t_parser *parser, t_token_type type);
 int				ms_parser_is_redir(t_token_type type);
 int				ms_parser_token_is_word_or_redir(t_token_type type);
 
-int				ms_execute_ast(t_ast *node);
+int				ms_execute_ast(t_ast *node, t_shell *shell);
+
+int				pwd_command(void);
+int				cd_cmd(t_shell *shell, t_simple_cmd *cmd);
+int				echo_cmd(t_simple_cmd *cmd);
+int				env_cmd(t_shell *shell, t_simple_cmd *cmd);
+int				export_cmd(t_shell *shell, t_simple_cmd *cmd);
+//int				unset_cmd(char **env, t_shell *shell, t_simple_cmd *cmd);
+int				unset_cmd(t_shell *shell, t_simple_cmd *cmd);
+
+char			*trim_env(char *env);
+void			local_env_clear(t_shell *shell);
+void			load_env(t_shell *shell);
+char			**get_env(const char *name, t_shell *shell);
+int				ms_env_set(t_shell *shell, const char *name, const char *value);
+int				ms_env_unset(t_shell *shell, const char *name);
 
 #endif

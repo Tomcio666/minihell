@@ -1,25 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   env_cmd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/13 19:30:12 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/13 19:14:23 by tloin            ###   ########.fr       */
+/*   Created: 2026/01/14 18:08:06 by mgumienn          #+#    #+#             */
+/*   Updated: 2026/01/20 16:25:38 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft.h"
 
-int	pwd_command(void)
+int	env_cmd(t_shell *shell, t_simple_cmd *cmd)
 {
-	char	*cwd;
+	int	index;
 
-	cwd = getcwd(NULL, 0);
-	if (!cwd)
-		return (perror("pwd"), 1);
-	printf("%s\n", cwd);
-	free(cwd);
+	(void)cmd;
+	if (!shell || !shell->env)
+		return (1);
+	// if (cmd && cmd->argv && cmd->argv[1])
+	// {
+	// 	ft_putstr_fd("env: too many arguments\n", 2);
+	// 	return (1);
+	// }
+	index = 0;
+	while (shell->env[index])
+	{
+		if (ft_strchr(shell->env[index], '='))
+			printf("%s\n", shell->env[index]);
+		index++;
+	}
 	return (0);
 }

@@ -10,7 +10,6 @@ INCLUDES = -I. -I$(LIBFT_DIR)
 LIBS = -lreadline -lncurses
 
 SRCS =	main.c \
-	pwd.c \
 	lexer.c \
 	lexer_utils.c \
 	lexer_word.c \
@@ -22,8 +21,14 @@ SRCS =	main.c \
 	parser_utils.c \
 	ast_utils.c \
 	cmd_utils.c \
-	executor.c
-# Add each source file (relative path) to the SRCS list above.
+	executor.c \
+	local_env.c \
+	cd_cmd.c \
+	echo_cmd.c \
+	export_cmd.c \
+	unset_cmd.c \
+	env_cmd.c \
+	pwd_cmd.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h

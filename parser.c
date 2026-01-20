@@ -6,11 +6,13 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:14:48 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 16:42:40 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static t_ast	*ms_parse_and_or(t_parser *parser);
 
 static t_token_type	ms_current_type(t_parser *parser)
 {
@@ -18,8 +20,6 @@ static t_token_type	ms_current_type(t_parser *parser)
 		return (TOKEN_END);
 	return (parser->current->type);
 }
-
-static t_ast	*ms_parse_and_or(t_parser *parser);
 
 static t_ast	*ms_join_node(t_node_type type, t_ast *left, t_ast *right)
 {
@@ -114,10 +114,10 @@ static t_ast	*ms_parse_pipeline(t_parser *parser)
 
 static t_ast	*ms_parse_and_or(t_parser *parser)
 {
-	t_ast	*left;
-	t_ast	*right;
-	t_ast	*node;
-	t_node_type	type;
+	t_ast			*left;
+	t_ast			*right;
+	t_ast			*node;
+	t_node_type		type;
 	t_token_type	tok;
 
 	left = ms_parse_pipeline(parser);
@@ -132,10 +132,7 @@ static t_ast	*ms_parse_and_or(t_parser *parser)
 		ms_parser_consume(parser, tok);
 		right = ms_parse_pipeline(parser);
 		if (!right)
-		{
-			ms_ast_clear(&left);
-			return (NULL);
-		}
+			return (ms_ast_clear(&left), NULL);
 		node = ms_join_node(type, left, right);
 		if (!node)
 			return (NULL);

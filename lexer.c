@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:04:55 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/18 14:31:39 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,7 @@ t_token	*ms_lexer(const char *input)
 		else
 			next = ms_add_word(input, index, &list);
 		if (next < 0)
-		{
-			ms_token_clear(&list);
-			return (NULL);
-		}
+			return (ms_token_clear(&list), NULL);
 		index = next;
 	}
 	return (list);

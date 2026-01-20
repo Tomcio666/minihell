@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:14:48 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/18 13:33:22 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,17 +80,14 @@ t_simple_cmd	*ms_parse_simple_cmd(t_parser *parser)
 	while (parser->current && ms_parser_token_is_word_or_redir(type))
 	{
 		if (!ms_parse_simple_step(parser, cmd))
-		{
-			ms_simple_cmd_clear(&cmd);
-			return (NULL);
-		}
+			return (ms_simple_cmd_clear(&cmd), NULL);
 		has_content = 1;
-		type = parser->current ? parser->current->type : TOKEN_END;
+		if (parser->current)
+			type = parser->current->type;
+		else
+			type = TOKEN_END;
 	}
 	if (!has_content)
-	{
-		ms_simple_cmd_clear(&cmd);
-		return (NULL);
-	}
+		return (ms_simple_cmd_clear(&cmd), NULL);
 	return (cmd);
 }

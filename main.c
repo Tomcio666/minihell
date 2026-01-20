@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:27:09 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 16:46:51 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ int	main(void)
 	char	*prompt;
 	t_token	*tokens;
 	t_ast	*ast;
+	t_shell	shell;
 
+	shell.env = NULL;
+	shell.user = NULL;
+	load_env(&shell);
 	while (1)
 	{
 		if (print_prompt(&prompt) != 0)
@@ -47,12 +51,13 @@ int	main(void)
 			ast = ms_parse(tokens);
 			if (ast)
 			{
-				ms_execute_ast(ast);
+				ms_execute_ast(ast, &shell);
 				ms_ast_clear(&ast);
 			}
 			ms_token_clear(&tokens);
 		}
 		free(buffer);
 	}
+	local_env_clear(&shell);
 	return (0);
 }
