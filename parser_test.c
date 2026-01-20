@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 11:14:48 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,13 @@ int	main(void)
 	t_token	*list;
 	t_ast	*ast;
 	char	*input;
+	t_shell	shell;
 
 	input = "(echo hi | grep h) && pwd";
-	list = ms_lexer(input);
+	shell.env = NULL;
+	shell.user = NULL;
+	shell.last_status = 0;
+	list = ms_lexer(input, &shell);
 	if (!list)
 		return (1);
 	ast = ms_parse(list);

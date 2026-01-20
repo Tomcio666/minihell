@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 14:31:39 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ static int	ms_add_operator(const char *s, int i, t_token **list)
 	return (i + advance);
 }
 
-static int	ms_add_word(const char *s, int i, t_token **list)
+static int	ms_add_word(const char *s, int i, t_token **list, t_shell *shell)
 {
 	t_token	*token;
 	char	*value;
 	int		next;
 
 	value = NULL;
-	next = ms_read_word(s, i, &value);
+	next = ms_read_word(s, i, &value, shell);
 	if (next < 0)
 	{
 		free(value);
@@ -58,7 +58,7 @@ static int	ms_add_word(const char *s, int i, t_token **list)
 	return (next);
 }
 
-t_token	*ms_lexer(const char *input)
+t_token	*ms_lexer(const char *input, t_shell *shell)
 {
 	t_token	*list;
 	int		index;
@@ -76,7 +76,7 @@ t_token	*ms_lexer(const char *input)
 		if (ms_is_operator(input[index]))
 			next = ms_add_operator(input, index, &list);
 		else
-			next = ms_add_word(input, index, &list);
+			next = ms_add_word(input, index, &list, shell);
 		if (next < 0)
 			return (ms_token_clear(&list), NULL);
 		index = next;

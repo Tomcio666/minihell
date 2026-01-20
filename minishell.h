@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 16:42:40 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ typedef struct s_shell
 {
 	char	**env;
 	char	*user;
+	int		last_status;
 }	t_shell;
 
 typedef struct s_parser
@@ -127,10 +128,10 @@ void			ms_ast_attach_children(t_ast *parent, t_ast *left, t_ast *right);
 void			ms_ast_set_command(t_ast *node, t_simple_cmd *command);
 void			ms_ast_clear(t_ast **node);
 
-t_token			*ms_lexer(const char *input);
+t_token			*ms_lexer(const char *input, t_shell *shell);
 int				ms_is_space(char c);
 int				ms_is_operator(char c);
-int				ms_read_word(const char *s, int i, char **out);
+int				ms_read_word(const char *s, int i, char **out, t_shell *shell);
 int				ms_operator_advance(const char *s, int i, t_token_type *type);
 
 t_ast			*ms_parse(t_token *tokens);
