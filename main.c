@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/21 18:30:20 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,25 @@ static int	print_prompt(t_shell *shell, char **prompt)
 	return (0);
 }
 
+void	handle_sigint(int sig)
+{
+	if (sig == 2)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		return ;
+	}
+	if (sig == 3)
+	{
+		rl_replace_line("", 0);
+		rl_redisplay();
+		return ;
+	}
+	printf("\n%d", sig);
+}
+
 int	main(void)
 {
 	char	*buffer;
@@ -102,12 +121,17 @@ int	main(void)
 	shell.user = NULL;
 	shell.last_status = 0;
 	load_env(&shell);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigint);
+
 	while (1)
 	{
 		if (print_prompt(&shell, &prompt) != 0)
 			return (1);
 		buffer = readline(prompt);
 		free(prompt);
+		if (buffer == NULL)
+			exit(0);
 		if (!buffer)
 			continue ;
 		tokens = ms_lexer(buffer, &shell);
