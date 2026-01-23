@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/23 18:47:31 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,5 +158,7 @@ void			load_env(t_shell *shell);
 char			**get_env(const char *name, t_shell *shell);
 int				ms_env_set(t_shell *shell, const char *name, const char *value);
 int				ms_env_unset(t_shell *shell, const char *name);
+
+int 			execute_executable(t_simple_cmd *cmd, t_shell *shell);
 
 #endif

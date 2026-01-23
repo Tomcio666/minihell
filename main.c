@@ -6,7 +6,7 @@
 /*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/21 18:30:20 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/01/23 16:22:40 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ void	handle_sigint(int sig)
 	}
 	if (sig == 3)
 	{
+		rl_replace_line("  ", 2);
+		rl_redisplay();
 		rl_replace_line("", 0);
 		rl_redisplay();
 		return ;

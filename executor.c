@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/23 18:44:37 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
 	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0
 		&& cmd->argv[0][5] == '\0')
 		return (unset_cmd(shell, cmd));
+	execute_executable(cmd, shell);
 	return (0);
 }
 
