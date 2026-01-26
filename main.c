@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 17:15:24 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 17:36:57 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,8 +152,13 @@ int	main(void)
 		free(prompt);
 		if (buffer == NULL)
 			exit(0);
-		if (!buffer)
+		if (*buffer)
+			add_history(buffer);
+		else
+		{
+			free(buffer);
 			continue ;
+		}
 		tokens = ms_lexer(buffer, &shell);
 		if (tokens)
 		{

@@ -6,12 +6,16 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 16:59:26 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 18:06:42 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# ifndef _POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE 200809L
+# endif
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -151,6 +155,7 @@ int				env_cmd(t_shell *shell, t_simple_cmd *cmd);
 int				export_cmd(t_shell *shell, t_simple_cmd *cmd);
 //int				unset_cmd(char **env, t_shell *shell, t_simple_cmd *cmd);
 int				unset_cmd(t_shell *shell, t_simple_cmd *cmd);
+int				exit_cmd(t_shell *shell, t_simple_cmd *cmd);
 
 char			*trim_env(char *env);
 void			local_env_clear(t_shell *shell);

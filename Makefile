@@ -29,6 +29,7 @@ SRCS =	main.c \
 	unset_cmd.c \
 	env_cmd.c \
 	pwd_cmd.c \
+	exit_cmd.c \
 	executables.c
 
 OBJS = $(SRCS:.c=.o)

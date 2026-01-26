@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 17:05:55 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 18:06:41 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,9 @@ static int	ms_is_builtin(t_simple_cmd *cmd)
 	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0
 		&& cmd->argv[0][5] == '\0')
 		return (1);
+	if (ft_strncmp(cmd->argv[0], "exit", 5) == 0
+		&& cmd->argv[0][4] == '\0')
+		return (1);
 	return (0);
 }
 
@@ -160,6 +163,9 @@ static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
 	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0
 		&& cmd->argv[0][5] == '\0')
 		return (unset_cmd(shell, cmd));
+	if (ft_strncmp(cmd->argv[0], "exit", 5) == 0
+		&& cmd->argv[0][4] == '\0')
+		return (exit_cmd(shell, cmd));
 	return (0);
 }
 
