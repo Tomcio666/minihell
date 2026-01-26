@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 18:58:07 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 19:01:56 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,9 @@ static void	ms_sigquit_handler(int sig)
 	if (rl_readline_state & RL_STATE_READCMD)
 	{
 		rl_on_new_line();
+		rl_replace_line("  ", 2);
+		rl_redisplay();
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 }
