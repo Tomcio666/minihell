@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/23 16:22:40 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:15:24 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
+
+static volatile sig_atomic_t	g_signal;
 
 static char	*ms_env_value(t_shell *shell, const char *name)
 {
@@ -90,25 +92,40 @@ static int	print_prompt(t_shell *shell, char **prompt)
 	return (0);
 }
 
-void	handle_sigint(int sig)
+static void	ms_sigint_handler(int sig)
 {
-	if (sig == 2)
+	(void)sig;
+	g_signal = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
+	if (rl_readline_state & RL_STATE_READCMD)
 	{
-		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		return ;
 	}
-	if (sig == 3)
+}
+
+static void	ms_sigquit_handler(int sig)
+{
+	(void)sig;
+	g_signal = SIGQUIT;
+	if (rl_readline_state & RL_STATE_READCMD)
 	{
-		rl_replace_line("  ", 2);
+		rl_on_new_line();
 		rl_redisplay();
-		rl_replace_line("", 0);
-		rl_redisplay();
-		return ;
 	}
-	printf("\n%d", sig);
+}
+
+static void	ms_signals_setup(void)
+{
+	struct sigaction	sa;
+
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART;
+	sa.sa_handler = ms_sigint_handler;
+	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = ms_sigquit_handler;
+	sigaction(SIGQUIT, &sa, NULL);
 }
 
 int	main(void)
@@ -123,14 +140,15 @@ int	main(void)
 	shell.user = NULL;
 	shell.last_status = 0;
 	load_env(&shell);
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigint);
+	g_signal = 0;
+	ms_signals_setup();
 
 	while (1)
 	{
 		if (print_prompt(&shell, &prompt) != 0)
 			return (1);
 		buffer = readline(prompt);
+		rl_readline_state &= ~RL_STATE_READCMD;
 		free(prompt);
 		if (buffer == NULL)
 			exit(0);

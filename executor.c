@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/23 18:44:37 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/01/26 17:05:55 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,7 @@ static char	*ms_path_join(const char *dir, const char *cmd)
 
 static int	ms_exec_direct(t_simple_cmd *cmd, t_shell *shell)
 {
-	execve(cmd->argv[0], cmd->argv, shell->env);
-	if (errno == ENOENT)
-	{
-		ft_putstr_fd("minishell: command not found\n", 2);
-		return (127);
-	}
-	perror(cmd->argv[0]);
-	return (126);
+	return (execute_executable(cmd->argv[0], cmd->argv, shell));
 }
 
 static int	ms_exec_search(t_simple_cmd *cmd, t_shell *shell)
@@ -102,7 +95,7 @@ static int	ms_exec_search(t_simple_cmd *cmd, t_shell *shell)
 		if (!full)
 			return (ms_free_split(paths), 1);
 		if (access(full, X_OK) == 0)
-			execve(full, cmd->argv, shell->env);
+			return (execute_executable(full, cmd->argv, shell));
 		free(full);
 		index++;
 	}
@@ -167,7 +160,6 @@ static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
 	if (ft_strncmp(cmd->argv[0], "unset", 6) == 0
 		&& cmd->argv[0][5] == '\0')
 		return (unset_cmd(shell, cmd));
-	execute_executable(cmd, shell);
 	return (0);
 }
 
@@ -187,6 +179,8 @@ static int	ms_execute_child(t_ast *node, int in_fd, int out_fd,
 {
 	int	status;
 
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (ms_dup_io(in_fd, out_fd) != 0)
 		return (1);
 	status = ms_execute_node(node, STDIN_FILENO, STDOUT_FILENO, shell, 1);
