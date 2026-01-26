@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 17:36:57 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 18:58:07 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,13 @@ static int	print_prompt(t_shell *shell, char **prompt)
 static void	ms_sigint_handler(int sig)
 {
 	(void)sig;
-	g_signal = SIGINT;
-	write(STDOUT_FILENO, "\n", 1);
 	if (rl_readline_state & RL_STATE_READCMD)
 	{
+		g_signal = SIGINT;
+		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		rl_redisplay();
+		rl_done = 1;
 	}
 }
 
@@ -152,6 +152,13 @@ int	main(void)
 		free(prompt);
 		if (buffer == NULL)
 			exit(0);
+		if (g_signal == SIGINT)
+		{
+			shell.last_status = 130;
+			g_signal = 0;
+			free(buffer);
+			continue ;
+		}
 		if (*buffer)
 			add_history(buffer);
 		else

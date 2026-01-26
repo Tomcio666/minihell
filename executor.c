@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 18:06:41 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/26 18:48:38 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,12 @@ static int	ms_wait_children(pid_t left_pid, pid_t right_pid)
 	waitpid(right_pid, &status, 0);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putstr_fd("Quit (core dumped)\n", 2);
+		return (128 + WTERMSIG(status));
+	}
 	return (1);
 }
 
@@ -278,6 +284,14 @@ static int	ms_execute_node(t_ast *node, int in_fd, int out_fd,
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
+		if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGQUIT)
+				ft_putstr_fd("Quit (core dumped)\n", 2);
+			if (WTERMSIG(status) == SIGINT)
+				ft_putstr_fd("\n", 2);
+			return (128 + WTERMSIG(status));
+		}
 		return (1);
 	}
 	return (1);
