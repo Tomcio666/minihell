@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 16:09:08 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/28 16:39:06 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,5 +168,7 @@ int				execute_executable(const char *path, char **argv, t_shell *shell);
 int				ms_redir_apply(t_simple_cmd *cmd, int *saved_in, int *saved_out);
 void			ms_redir_restore(int saved_in, int saved_out);
 int				ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd);
+
+char			*ms_env_join(const char *name, const char *value);
 
 #endif

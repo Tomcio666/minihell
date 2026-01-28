@@ -33,7 +33,8 @@ SRCS =	main.c \
 	exit_cmd.c \
 	redir.c \
 	redir_utils.c \
-	executables.c
+	executables.c \
+	local_env_utils.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h
