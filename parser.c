@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 20:05:41 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/28 16:04:51 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,10 @@ static t_ast	*ms_parse_pipeline(t_parser *parser)
 		ms_parser_consume(parser, TOKEN_PIPE);
 		right = ms_parse_term(parser);
 		if (!right)
-		{
-			ms_ast_clear(&left);
-			return (NULL);
-		}
+			return (ms_ast_clear(&left), NULL);
 		node = ms_ast_new(NODE_PIPE);
 		if (!node)
-		{
-			ms_ast_clear(&left);
-			ms_ast_clear(&right);
-			return (NULL);
-		}
+			return (ms_ast_clear(&left), ms_ast_clear(&right), NULL);
 		ms_ast_attach_children(node, left, right);
 		left = node;
 	}
@@ -95,31 +88,24 @@ static t_ast	*ms_parse_and_or(t_parser *parser)
 	t_ast			*left;
 	t_ast			*right;
 	t_ast			*node;
-	t_node_type		type;
 
 	left = ms_parse_pipeline(parser);
 	if (!left)
 		return (NULL);
-	while (parser->current && (parser->current->type == TOKEN_AND_IF
+	while (parser->current
+		&& (parser->current->type == TOKEN_AND_IF
 			|| parser->current->type == TOKEN_OR_IF))
 	{
-		type = NODE_AND;
 		if (parser->current->type == TOKEN_OR_IF)
-			type = NODE_OR;
+			node = ms_ast_new(NODE_OR);
+		else
+			node = ms_ast_new(NODE_AND);
 		ms_parser_consume(parser, parser->current->type);
 		right = ms_parse_pipeline(parser);
 		if (!right)
-		{
-			ms_ast_clear(&left);
-			return (NULL);
-		}
-		node = ms_ast_new(type);
+			return (ms_ast_clear(&left), NULL);
 		if (!node)
-		{
-			ms_ast_clear(&left);
-			ms_ast_clear(&right);
-			return (NULL);
-		}
+			return (ms_ast_clear(&left), ms_ast_clear(&right), NULL);
 		ms_ast_attach_children(node, left, right);
 		left = node;
 	}

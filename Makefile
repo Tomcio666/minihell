@@ -19,6 +19,7 @@ SRCS =	main.c \
 	parser.c \
 	parser_cmd.c \
 	parser_utils.c \
+	parser_utils_token.c \
 	ast_utils.c \
 	cmd_utils.c \
 	executor.c \
