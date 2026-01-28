@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 18:06:42 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/28 14:53:42 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,5 +165,8 @@ int				ms_env_set(t_shell *shell, const char *name, const char *value);
 int				ms_env_unset(t_shell *shell, const char *name);
 
 int				execute_executable(const char *path, char **argv, t_shell *shell);
+int				ms_redir_apply(t_simple_cmd *cmd, int *saved_in, int *saved_out);
+void				ms_redir_restore(int saved_in, int saved_out);
+int				ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd);
 
 #endif

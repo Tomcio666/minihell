@@ -30,6 +30,8 @@ SRCS =	main.c \
 	env_cmd.c \
 	pwd_cmd.c \
 	exit_cmd.c \
+	redir.c \
+	redir_utils.c \
 	executables.c
 
 OBJS = $(SRCS:.c=.o)

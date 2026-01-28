@@ -6,12 +6,11 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 17:30:40 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/01/18 17:48:41 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/28 15:29:30 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 static char	*ms_cd_target(t_shell *shell, t_simple_cmd *cmd)
 {
@@ -28,7 +27,7 @@ static char	*ms_cd_target(t_shell *shell, t_simple_cmd *cmd)
 static int	ms_cd_update_env(t_shell *shell, char *oldpwd)
 {
 	char	*cwd;
-	int	status;
+	int		status;
 
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
@@ -36,7 +35,9 @@ static int	ms_cd_update_env(t_shell *shell, char *oldpwd)
 	status = ms_env_set(shell, "OLDPWD", oldpwd);
 	status &= ms_env_set(shell, "PWD", cwd);
 	free(cwd);
-	return (status == 1 ? 0 : 1);
+	if (status == 1)
+		return (0);
+	return (1);
 }
 
 int	cd_cmd(t_shell *shell, t_simple_cmd *cmd)

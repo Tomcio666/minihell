@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/26 18:48:38 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/28 15:30:14 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ static int	ms_exec_search(t_simple_cmd *cmd, t_shell *shell)
 {
 	char	**paths;
 	char	*full;
-	int	index;
+	int		index;
 
 	paths = ms_env_path(shell);
 	if (!paths)
@@ -145,7 +145,7 @@ static int	ms_is_builtin(t_simple_cmd *cmd)
 	return (0);
 }
 
-static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
+static int	ms_execute_builtin_only(t_simple_cmd *cmd, t_shell *shell)
 {
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 		return (0);
@@ -169,12 +169,32 @@ static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
 	return (0);
 }
 
+static int	ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell)
+{
+	int	saved_in;
+	int	saved_out;
+	int	status;
+
+	saved_in = -1;
+	saved_out = -1;
+	if (ms_redir_apply(cmd, &saved_in, &saved_out) != 0)
+	{
+		ms_redir_restore(saved_in, saved_out);
+		return (1);
+	}
+	status = ms_execute_builtin_only(cmd, shell);
+	ms_redir_restore(saved_in, saved_out);
+	return (status);
+}
+
 static int	ms_execute_simple_cmd(t_simple_cmd *cmd, t_shell *shell)
 {
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 		return (0);
+	if (ms_redir_apply(cmd, NULL, NULL) != 0)
+		return (1);
 	if (ms_is_builtin(cmd))
-		return (ms_execute_builtin(cmd, shell));
+		return (ms_execute_builtin_only(cmd, shell));
 	if (ms_has_slash(cmd->argv[0]))
 		return (ms_exec_direct(cmd, shell));
 	return (ms_exec_search(cmd, shell));
