@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 15:55:23 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/29 17:05:21 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,6 +291,22 @@ static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
 	}
 	if (node->type == NODE_SIMPLE_CMD)
 	{
+		if (!node->command || !node->command->argv
+			|| !node->command->argv[0])
+		{
+			int	saved_in;
+			int	saved_out;
+
+			saved_in = -1;
+			saved_out = -1;
+			if (ms_redir_apply(node->command, &saved_in, &saved_out) != 0)
+			{
+				ms_redir_restore(saved_in, saved_out);
+				return (1);
+			}
+			ms_redir_restore(saved_in, saved_out);
+			return (0);
+		}
 		if (ctx->in_child)
 			return (ms_execute_simple_cmd(node->command, ctx->shell));
 		if (ms_is_builtin(node->command))

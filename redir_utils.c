@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:14:32 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 15:58:33 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/29 16:59:50 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,26 @@ static int	ms_is_delim(const char *line, const char *delim)
 static int	ms_heredoc_fd(const char *delim)
 {
 	int		pipefd[2];
+	int		save_in;
+	int		tty;
 	char	*line;
 
+	save_in = dup(STDIN_FILENO);
+	tty = open("/dev/tty", O_RDONLY);
+	if (tty >= 0)
+	{
+		dup2(tty, STDIN_FILENO);
+		close(tty);
+	}
 	if (pipe(pipefd) < 0)
+	{
+		if (save_in >= 0)
+		{
+			dup2(save_in, STDIN_FILENO);
+			close(save_in);
+		}
 		return (-1);
+	}
 	while (1)
 	{
 		line = readline("> ");
@@ -39,6 +55,11 @@ static int	ms_heredoc_fd(const char *delim)
 		write(pipefd[1], line, ft_strlen(line));
 		write(pipefd[1], "\n", 1);
 		free(line);
+	}
+	if (save_in >= 0)
+	{
+		dup2(save_in, STDIN_FILENO);
+		close(save_in);
 	}
 	close(pipefd[1]);
 	return (pipefd[0]);
