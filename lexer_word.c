@@ -6,12 +6,11 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/29 14:59:26 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "libft.h"
 
 static char	*ms_append_char(char *s, char c)
 {
@@ -61,128 +60,119 @@ static char	*ms_append_str(char *s, const char *add)
 	return (new_str);
 }
 
-static int	ms_is_name_start(char c)
-{
-	return (ft_isalpha(c) || c == '_');
-}
-
-static int	ms_is_name_char(char c)
-{
-	return (ft_isalnum(c) || c == '_');
-}
-
-static int	ms_expand_status(char **out, t_shell *shell)
+static int	ms_expand_status(t_lex_state *st)
 {
 	char	*status;
 	int		value;
 
 	value = 0;
-	if (shell)
-		value = shell->last_status;
+	if (st->shell)
+		value = st->shell->last_status;
 	status = ft_itoa(value);
 	if (!status)
 		return (-1);
-	*out = ms_append_str(*out, status);
+	*st->out = ms_append_str(*st->out, status);
 	free(status);
-	if (!*out)
+	if (!*st->out)
 		return (-1);
 	return (0);
 }
 
-static int	ms_append_dollar(char **out)
+static int	ms_append_dollar(t_lex_state *st)
 {
-	*out = ms_append_char(*out, '$');
-	if (!*out)
+	*st->out = ms_append_char(*st->out, '$');
+	if (!*st->out)
 		return (-1);
 	return (0);
 }
 
-static int	ms_expand_var(const char *s, int i, char **out, t_shell *shell)
+static int	ms_expand_var(t_lex_state *st, int i)
 {
 	int		start;
 	char	*name;
 	char	**slot;
 
-	if (!s[i])
+	if (!st->s[i])
 	{
-		if (ms_append_dollar(out) != 0)
+		if (ms_append_dollar(st) != 0)
 			return (-1);
 		return (i);
 	}
-	if (s[i] == '?')
+	if (st->s[i] == '?')
 	{
-		if (ms_expand_status(out, shell) != 0)
+		if (ms_expand_status(st) != 0)
 			return (-1);
 		return (i + 1);
 	}
-	if (!ms_is_name_start(s[i]))
+	if (!(ft_isalpha(st->s[i]) || st->s[i] == '_'))
 	{
-		if (ms_append_dollar(out) != 0)
+		if (ms_append_dollar(st) != 0)
 			return (-1);
 		return (i);
 	}
 	start = i;
-	while (s[i] && ms_is_name_char(s[i]))
+	while (st->s[i] && (ft_isalnum(st->s[i]) || st->s[i] == '_'))
 		i++;
-	name = ft_substr(s, start, i - start);
+	name = ft_substr(st->s, start, i - start);
 	if (!name)
 		return (-1);
-	slot = get_env(name, shell);
+	slot = get_env(name, st->shell);
 	if (slot)
-		*out = ms_append_str(*out, trim_env(*slot));
+		*st->out = ms_append_str(*st->out, trim_env(*slot));
 	free(name);
-	if (!*out)
+	if (!*st->out)
 		return (-1);
 	return (i);
 }
 
-static int	ms_read_quote(const char *s, int i, char quote,
-				char **out, t_shell *shell)
+static int	ms_read_quote(t_lex_state *st, int i, char quote)
 {
-	while (s[i] && s[i] != quote)
+	while (st->s[i] && st->s[i] != quote)
 	{
-		if (quote == '"' && s[i] == '$')
+		if (quote == '"' && st->s[i] == '$')
 		{
-			i = ms_expand_var(s, i + 1, out, shell);
+			i = ms_expand_var(st, i + 1);
 			if (i < 0)
 				return (-1);
 		}
 		else
 		{
-			*out = ms_append_char(*out, s[i]);
-			if (!*out)
+			*st->out = ms_append_char(*st->out, st->s[i]);
+			if (!*st->out)
 				return (-1);
 			i++;
 		}
 	}
-	if (!s[i])
+	if (!st->s[i])
 		return (-1);
 	return (i + 1);
 }
 
 int	ms_read_word(const char *s, int i, char **out, t_shell *shell)
 {
-	char	quote;
+	t_lex_state	st;
 
+	st.s = s;
+	st.out = out;
+	st.shell = shell;
 	while (s[i] && !ms_is_space(s[i]) && !ms_is_operator(s[i]))
 	{
 		if (s[i] == '\'' || s[i] == '"')
 		{
-			quote = s[i];
-			i = ms_read_quote(s, i + 1, quote, out, shell);
+			i = ms_read_quote(&st, i + 1, s[i]);
 			if (i < 0)
 				return (-1);
 		}
 		else if (s[i] == '$')
 		{
-			i = ms_expand_var(s, i + 1, out, shell);
+			i = ms_expand_var(&st, i + 1);
 			if (i < 0)
 				return (-1);
 		}
 		else
 		{
-			*out = ms_append_char(*out, s[i]);
-			if (!*out)
+			*st.out = ms_append_char(*st.out, s[i]);
+			if (!*st.out)
 				return (-1);
 			i++;
 		}

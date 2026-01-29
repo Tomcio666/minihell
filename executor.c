@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 16:27:05 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/01/29 15:55:23 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ms_execute_node(t_ast *node, int in_fd, int out_fd,
-			t_shell *shell, int in_child);
+static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx);
 
 static int	ms_has_slash(const char *s)
 {
@@ -69,11 +68,6 @@ static char	*ms_path_join(const char *dir, const char *cmd)
 	full = ft_strjoin(tmp, cmd);
 	free(tmp);
 	return (full);
-}
-
-static int	ms_exec_direct(t_simple_cmd *cmd, t_shell *shell)
-{
-	return (execute_executable(cmd->argv[0], cmd->argv, shell));
 }
 
 static int	ms_exec_search(t_simple_cmd *cmd, t_shell *shell)
@@ -196,20 +190,24 @@ static int	ms_execute_simple_cmd(t_simple_cmd *cmd, t_shell *shell)
 	if (ms_is_builtin(cmd))
 		return (ms_execute_builtin_only(cmd, shell));
 	if (ms_has_slash(cmd->argv[0]))
-		return (ms_exec_direct(cmd, shell));
+		return (execute_executable(cmd->argv[0], cmd->argv, shell));
 	return (ms_exec_search(cmd, shell));
 }
 
-static int	ms_execute_child(t_ast *node, int in_fd, int out_fd,
-			t_shell *shell)
+static int	ms_execute_child(t_ast *node, int in_fd, int out_fd, t_shell *shell)
 {
-	int	status;
+	int				status;
+	t_exec_ctx		ctx;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (ms_dup_io(in_fd, out_fd) != 0)
 		return (1);
-	status = ms_execute_node(node, STDIN_FILENO, STDOUT_FILENO, shell, 1);
+	ctx.in_fd = STDIN_FILENO;
+	ctx.out_fd = STDOUT_FILENO;
+	ctx.shell = shell;
+	ctx.in_child = 1;
+	status = ms_execute_node(node, &ctx);
 	return (status);
 }
 
@@ -257,21 +255,19 @@ static int	ms_execute_pipe(t_ast *node, int in_fd, int out_fd,
 	return (ms_wait_children(left_pid, right_pid));
 }
 
-static int	ms_execute_logic(t_ast *node, int in_fd, int out_fd,
-			t_shell *shell, int in_child)
+static int	ms_execute_logic(t_ast *node, t_exec_ctx *ctx)
 {
 	int	status;
 
-	status = ms_execute_node(node->left, in_fd, out_fd, shell, in_child);
+	status = ms_execute_node(node->left, ctx);
 	if (node->type == NODE_AND && status == 0)
-		return (ms_execute_node(node->right, in_fd, out_fd, shell, in_child));
+		return (ms_execute_node(node->right, ctx));
 	if (node->type == NODE_OR && status != 0)
-		return (ms_execute_node(node->right, in_fd, out_fd, shell, in_child));
+		return (ms_execute_node(node->right, ctx));
 	return (status);
 }
 
-static int	ms_execute_node(t_ast *node, int in_fd, int out_fd,
-			t_shell *shell, int in_child)
+static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
 {
 	pid_t	pid;
 	int		status;
@@ -279,28 +275,29 @@ static int	ms_execute_node(t_ast *node, int in_fd, int out_fd,
 	if (!node)
 		return (1);
 	if (node->type == NODE_PIPE)
-		return (ms_execute_pipe(node, in_fd, out_fd, shell));
+		return (ms_execute_pipe(node, ctx->in_fd, ctx->out_fd, ctx->shell));
 	if (node->type == NODE_AND || node->type == NODE_OR)
-		return (ms_execute_logic(node, in_fd, out_fd, shell, in_child));
+		return (ms_execute_logic(node, ctx));
 	if (node->type == NODE_SUBSHELL)
 	{
-		if (in_child)
-			return (ms_execute_node(node->left, in_fd, out_fd, shell, 1));
+		if (ctx->in_child)
+			return (ms_execute_node(node->left, ctx));
 		pid = fork();
 		if (pid == 0)
-			_exit(ms_execute_child(node->left, in_fd, out_fd, shell));
+			_exit(ms_execute_child(node->left, ctx->in_fd, ctx->out_fd,
+					ctx->shell));
 		waitpid(pid, NULL, 0);
 		return (0);
 	}
 	if (node->type == NODE_SIMPLE_CMD)
 	{
-		if (in_child)
-			return (ms_execute_simple_cmd(node->command, shell));
+		if (ctx->in_child)
+			return (ms_execute_simple_cmd(node->command, ctx->shell));
 		if (ms_is_builtin(node->command))
-			return (ms_execute_builtin(node->command, shell));
+			return (ms_execute_builtin(node->command, ctx->shell));
 		pid = fork();
 		if (pid == 0)
-			_exit(ms_execute_child(node, in_fd, out_fd, shell));
+			_exit(ms_execute_child(node, ctx->in_fd, ctx->out_fd, ctx->shell));
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			return (WEXITSTATUS(status));
@@ -319,5 +316,11 @@ static int	ms_execute_node(t_ast *node, int in_fd, int out_fd,
 
 int	ms_execute_ast(t_ast *node, t_shell *shell)
 {
-	return (ms_execute_node(node, STDIN_FILENO, STDOUT_FILENO, shell, 0));
+	t_exec_ctx	ctx;
+
+	ctx.in_fd = STDIN_FILENO;
+	ctx.out_fd = STDOUT_FILENO;
+	ctx.shell = shell;
+	ctx.in_child = 0;
+	return (ms_execute_node(node, &ctx));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 16:39:06 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/01/29 15:19:46 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,22 @@ typedef struct s_parser
 {
 	t_token	*current;
 }	t_parser;
+
+typedef struct s_lex_state
+{
+	const char	*s;
+	char		**out;
+	t_shell		*shell;
+}	t_lex_state;
+
+typedef struct s_exec_ctx
+{
+	int		in_fd;
+	int		out_fd;
+	t_shell	*shell;
+	int		in_child;
+}	t_exec_ctx;
+
 
 t_token			*ms_token_new(t_token_type type, const char *value);
 void			ms_token_add_back(t_token **list, t_token *new_node);
