@@ -3,20 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:14:32 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 16:59:50 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:08:56 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	ms_is_delim(const char *line, const char *delim)
+// static int	ms_is_delim(const char *line, const char *delim)
+// {
+// 	if (!line || !delim)
+// 		return (0);
+// 	return (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0);
+// }
+
+static int	*ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 {
-	if (!line || !delim)
-		return (0);
-	return (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0);
+	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || !delim)
+			break ;
+		if (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(pipefd[1], line, ft_strlen(line));
+		write(pipefd[1], "\n", 1);
+		free(line);
+	}
+	if (save_in >= 0)
+	{
+		dup2(save_in, STDIN_FILENO);
+		close(save_in);
+	}
+	return (pipefd);
 }
 
 static int	ms_heredoc_fd(const char *delim)
@@ -24,7 +50,6 @@ static int	ms_heredoc_fd(const char *delim)
 	int		pipefd[2];
 	int		save_in;
 	int		tty;
-	char	*line;
 
 	save_in = dup(STDIN_FILENO);
 	tty = open("/dev/tty", O_RDONLY);
@@ -42,25 +67,7 @@ static int	ms_heredoc_fd(const char *delim)
 		}
 		return (-1);
 	}
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		if (ms_is_delim(line, delim))
-		{
-			free(line);
-			break ;
-		}
-		write(pipefd[1], line, ft_strlen(line));
-		write(pipefd[1], "\n", 1);
-		free(line);
-	}
-	if (save_in >= 0)
-	{
-		dup2(save_in, STDIN_FILENO);
-		close(save_in);
-	}
+	ms_heredoc_fd_util(delim, pipefd, save_in);
 	close(pipefd[1]);
 	return (pipefd[0]);
 }

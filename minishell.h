@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 15:19:46 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:22:16 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ typedef struct s_exec_ctx
 	int		in_child;
 }	t_exec_ctx;
 
-
 t_token			*ms_token_new(t_token_type type, const char *value);
 void			ms_token_add_back(t_token **list, t_token *new_node);
 void			ms_token_clear(t_token **list);
@@ -151,7 +150,7 @@ void			ms_ast_clear(t_ast **node);
 t_token			*ms_lexer(const char *input, t_shell *shell);
 int				ms_is_space(char c);
 int				ms_is_operator(char c);
-int				ms_read_word(const char *s, int i, char **out, t_shell *shell);
+int				ms_read_word(t_lex_state st, int i);
 int				ms_operator_advance(const char *s, int i, t_token_type *type);
 
 t_ast			*ms_parse(t_token *tokens);

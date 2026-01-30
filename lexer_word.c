@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 14:59:26 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:29:44 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,12 +86,8 @@ static int	ms_append_dollar(t_lex_state *st)
 	return (0);
 }
 
-static int	ms_expand_var(t_lex_state *st, int i)
+static int	ms_expand_var_cases(t_lex_state *st, int i)
 {
-	int		start;
-	char	*name;
-	char	**slot;
-
 	if (!st->s[i])
 	{
 		if (ms_append_dollar(st) != 0)
@@ -110,6 +106,19 @@ static int	ms_expand_var(t_lex_state *st, int i)
 			return (-1);
 		return (i);
 	}
+	return (-10);
+}
+
+static int	ms_expand_var(t_lex_state *st, int i)
+{
+	int		start;
+	int		cases_return;
+	char	*name;
+	char	**slot;
+
+	cases_return = ms_expand_var_cases(st, i);
+	if (cases_return != -10)
+		return (cases_return);
 	start = i;
 	while (st->s[i] && (ft_isalnum(st->s[i]) || st->s[i] == '_'))
 		i++;
@@ -148,22 +157,17 @@ static int	ms_read_quote(t_lex_state *st, int i, char quote)
 	return (i + 1);
 }
 
-int	ms_read_word(const char *s, int i, char **out, t_shell *shell)
+int	ms_read_word(t_lex_state st, int i)
 {
-	t_lex_state	st;
-
-	st.s = s;
-	st.out = out;
-	st.shell = shell;
-	while (s[i] && !ms_is_space(s[i]) && !ms_is_operator(s[i]))
+	while (st.s[i] && !ms_is_space(st.s[i]) && !ms_is_operator(st.s[i]))
 	{
-		if (s[i] == '\'' || s[i] == '"')
+		if (st.s[i] == '\'' || st.s[i] == '"')
 		{
-			i = ms_read_quote(&st, i + 1, s[i]);
+			i = ms_read_quote(&st, i + 1, st.s[i]);
 			if (i < 0)
 				return (-1);
 		}
-		else if (s[i] == '$')
+		else if (st.s[i] == '$')
 		{
 			i = ms_expand_var(&st, i + 1);
 			if (i < 0)
@@ -171,7 +175,7 @@ int	ms_read_word(const char *s, int i, char **out, t_shell *shell)
 		}
 		else
 		{
-			*st.out = ms_append_char(*st.out, s[i]);
+			*st.out = ms_append_char(*st.out, st.s[i]);
 			if (!*st.out)
 				return (-1);
 			i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 17:05:21 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:45:44 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,11 +267,54 @@ static int	ms_execute_logic(t_ast *node, t_exec_ctx *ctx)
 	return (status);
 }
 
+static int	node_no_command(t_ast *node)
+{
+	int	saved_in;
+	int	saved_out;
+
+	saved_in = -1;
+	saved_out = -1;
+	if (ms_redir_apply(node->command, &saved_in, &saved_out) != 0)
+	{
+		ms_redir_restore(saved_in, saved_out);
+		return (1);
+	}
+	ms_redir_restore(saved_in, saved_out);
+	return (0);
+}
+
+static int	node_type_zero(t_ast *node, t_exec_ctx *ctx, pid_t pid)
+{
+	int		status;
+
+	if (!node->command || !node->command->argv || !node->command->argv[0])
+		return (node_no_command(node));
+	if (ctx->in_child)
+		return (ms_execute_simple_cmd(node->command, ctx->shell));
+	if (ms_is_builtin(node->command))
+		return (ms_execute_builtin(node->command, ctx->shell));
+	pid = fork();
+	if (pid == 0)
+		_exit(ms_execute_child(node, ctx->in_fd, ctx->out_fd, ctx->shell));
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putstr_fd("Quit (core dumped)\n", 2);
+		if (WTERMSIG(status) == SIGINT)
+			ft_putstr_fd("\n", 2);
+		return (128 + WTERMSIG(status));
+	}
+	return (1);
+}
+
 static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
 {
 	pid_t	pid;
-	int		status;
 
+	pid = 0;
 	if (!node)
 		return (1);
 	if (node->type == NODE_PIPE)
@@ -290,43 +333,7 @@ static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
 		return (0);
 	}
 	if (node->type == NODE_SIMPLE_CMD)
-	{
-		if (!node->command || !node->command->argv
-			|| !node->command->argv[0])
-		{
-			int	saved_in;
-			int	saved_out;
-
-			saved_in = -1;
-			saved_out = -1;
-			if (ms_redir_apply(node->command, &saved_in, &saved_out) != 0)
-			{
-				ms_redir_restore(saved_in, saved_out);
-				return (1);
-			}
-			ms_redir_restore(saved_in, saved_out);
-			return (0);
-		}
-		if (ctx->in_child)
-			return (ms_execute_simple_cmd(node->command, ctx->shell));
-		if (ms_is_builtin(node->command))
-			return (ms_execute_builtin(node->command, ctx->shell));
-		pid = fork();
-		if (pid == 0)
-			_exit(ms_execute_child(node, ctx->in_fd, ctx->out_fd, ctx->shell));
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			return (WEXITSTATUS(status));
-		if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == SIGQUIT)
-				ft_putstr_fd("Quit (core dumped)\n", 2);
-			if (WTERMSIG(status) == SIGINT)
-				ft_putstr_fd("\n", 2);
-			return (128 + WTERMSIG(status));
-		}
-		return (1);
-	}
+		return (node_type_zero(node, ctx, pid));
 	return (1);
 }
 

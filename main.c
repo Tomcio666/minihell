@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/29 16:47:09 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:48:51 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,7 @@ static char	*ms_prompt_path(t_shell *shell)
 		display = ft_strdup("~");
 	else
 		display = ft_strjoin("~", path + len);
-	free(path);
-	return (display);
+	return (free(path), display);
 }
 
 static char	*ms_prompt_join(const char *user, const char *path)
@@ -145,7 +144,6 @@ int	main(void)
 	load_env(&shell);
 	g_signal = 0;
 	ms_signals_setup();
-
 	while (1)
 	{
 		if (print_prompt(&shell, &prompt) != 0)

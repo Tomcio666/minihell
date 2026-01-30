@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/20 19:56:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/01/30 16:22:23 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,16 @@ static int	ms_add_operator(const char *s, int i, t_token **list)
 
 static int	ms_add_word(const char *s, int i, t_token **list, t_shell *shell)
 {
-	t_token	*token;
-	char	*value;
-	int		next;
+	t_token		*token;
+	char		*value;
+	int			next;
+	t_lex_state	st;
 
 	value = NULL;
-	next = ms_read_word(s, i, &value, shell);
+	st.s = s;
+	st.out = &value;
+	st.shell = shell;
+	next = ms_read_word(st, i);
 	if (next < 0)
 	{
 		free(value);
