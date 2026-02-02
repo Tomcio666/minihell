@@ -6,7 +6,7 @@
 /*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/30 16:22:16 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/02/02 16:30:56 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,5 +185,11 @@ void			ms_redir_restore(int saved_in, int saved_out);
 int				ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd);
 
 char			*ms_env_join(const char *name, const char *value);
+
+char			*ms_append_char(char *s, char c);
+char			*ms_append_str(char *s, const char *add);
+int				ms_expand_status(t_lex_state *st);
+int				ms_append_dollar(t_lex_state *st);
+int				ms_expand_var_cases(t_lex_state *st, int i);
 
 #endif
