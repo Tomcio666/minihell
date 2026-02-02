@@ -35,7 +35,10 @@ SRCS =	main.c \
 	redir_utils.c \
 	executables.c \
 	local_env_utils.c \
-	lexer_word_utils.c
+	lexer_word_utils.c \
+	executor_utils.c \
+	executor_io.c \
+	executor_process.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h
