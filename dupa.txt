@@ -1,14 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/12 18:46:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 17:49:38 by tloin            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    dupa.txt                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: tloin <tloin@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/01/12 18:46:10 by tloin             #+#    #+#              #
+#    Updated: 2026/02/02 17:08:57 by tloin            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -143,7 +143,7 @@ t_simple_cmd	*ms_simple_cmd_new(void);
 void			ms_simple_cmd_clear(t_simple_cmd **cmd);
 
 t_ast			*ms_ast_new(t_node_type type);
-void			ms_ast_attach_chld(t_ast *parent, t_ast *left, t_ast *right);
+void			ms_ast_attach_children(t_ast *parent, t_ast *left, t_ast *right);
 void			ms_ast_set_command(t_ast *node, t_simple_cmd *command);
 void			ms_ast_clear(t_ast **node);
 
@@ -161,8 +161,12 @@ int				ms_parser_consume(t_parser *parser, t_token_type type);
 int				ms_parser_is_redir(t_token_type type);
 int				ms_parser_token_is_word_or_redir(t_token_type type);
 
-int				ms_execute_node(t_ast *node, t_exec_ctx *ctx);
 int				ms_execute_ast(t_ast *node, t_shell *shell);
+
+int				print_prompt(t_shell *shell, char **prompt);
+void			ms_signals_setup(void);
+int				ms_signal_get(void);
+void			ms_signal_clear(void);
 
 int				pwd_command(void);
 int				cd_cmd(t_shell *shell, t_simple_cmd *cmd);
@@ -179,44 +183,87 @@ char			**get_env(const char *name, t_shell *shell);
 int				ms_env_set(t_shell *shell, const char *name, const char *value);
 int				ms_env_unset(t_shell *shell, const char *name);
 
-int				start_executable(const char *path, char **argv, t_shell *shell);
-int				ms_redir_apply(t_simple_cmd *cmd, int *save_in, int *save_out);
+int				execute_executable(const char *path, char **argv, t_shell *shell);
+int				ms_redir_apply(t_simple_cmd *cmd, int *saved_in, int *saved_out);
 void			ms_redir_restore(int saved_in, int saved_out);
 int				ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd);
 
 char			*ms_env_join(const char *name, const char *value);
-//lexer_utils
+
 char			*ms_append_char(char *s, char c);
 char			*ms_append_str(char *s, const char *add);
 int				ms_expand_status(t_lex_state *st);
 int				ms_append_dollar(t_lex_state *st);
 int				ms_expand_var_cases(t_lex_state *st, int i);
 
-//executor_utils
-int				ms_has_slash(const char *s);
-void			ms_free_split(char **arr);
-char			**ms_env_path(t_shell *shell);
-char			*ms_path_join(const char *dir, const char *cmd);
-int				ms_exec_search(t_simple_cmd *cmd, t_shell *shell);
-
-//executor_io
-int				ms_dup_io(int in_fd, int out_fd);
-int				ms_is_builtin(t_simple_cmd *cmd);
-int				ms_execute_builtin_only(t_simple_cmd *cmd, t_shell *shell);
-int				ms_execute_builtin(t_simple_cmd *cmd, t_shell *shell);
-int				ms_execute_simple_cmd(t_simple_cmd *cmd, t_shell *shell);
-
-//executor_process
-int				ms_execute_child(t_ast *node, int in_fd, int out_fd, t_shell *shell);
-int				ms_wait_children(pid_t left_pid, pid_t right_pid);
-int				ms_execute_pipe(t_ast *node, int in_fd, int out_fd, t_shell *shell);
-int				ms_execute_logic(t_ast *node, t_exec_ctx *ctx);
-int				node_no_command(t_ast *node);
-
-//prompt.c
-int				print_prompt(t_shell *shell, char **prompt);
-void			ms_signals_setup(void);
-int				ms_signal_get(void);
-void			ms_signal_clear(void);
-
 #endif
+
+
+
+
+NAME = minishell
+
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+INCLUDES = -I. -I$(LIBFT_DIR)
+LIBS = -lreadline -lncurses
+
+SRCS =	main.c \
+	prompt.c \
+	signals.c \
+	lexer.c \
+	lexer_utils.c \
+	lexer_word.c \
+	lexer_ops.c \
+	lexer_token.c \
+	lexer_debug.c \
+	parser.c \
+	parser_cmd.c \
+	parser_utils.c \
+	parser_utils_token.c \
+	ast_utils.c \
+	cmd_utils.c \
+	executor.c \
+	local_env.c \
+	cd_cmd.c \
+	echo_cmd.c \
+	export_cmd.c \
+	unset_cmd.c \
+	env_cmd.c \
+	pwd_cmd.c \
+	exit_cmd.c \
+	redir.c \
+	redir_utils.c \
+	executables.c \
+	local_env_utils.c \
+	lexer_word_utils.c
+
+OBJS = $(SRCS:.c=.o)
+HEADERS = minishell.h
+
+all:	$(NAME)
+
+$(NAME):	$(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME) $(LIBS)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(OBJS)
+	$(MAKE) -C $(LIBFT_DIR) clean
+
+fclean:	clean
+	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+
+re:	fclean all
+
+.PHONY:	all clean fclean re

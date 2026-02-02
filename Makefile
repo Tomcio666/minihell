@@ -22,7 +22,7 @@ SRCS =	main.c \
 	parser_utils_token.c \
 	ast_utils.c \
 	cmd_utils.c \
-	executor.c \
+	executor_nodes.c \
 	local_env.c \
 	cd_cmd.c \
 	echo_cmd.c \
@@ -38,7 +38,9 @@ SRCS =	main.c \
 	lexer_word_utils.c \
 	executor_utils.c \
 	executor_io.c \
-	executor_process.c
+	executor_process.c \
+	prompt.c \
+	signals.c \
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h

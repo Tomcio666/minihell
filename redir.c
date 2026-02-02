@@ -6,24 +6,24 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:05:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 15:26:10 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/02 17:23:26 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ms_redir_apply(t_simple_cmd *cmd, int *saved_in, int *saved_out)
+int	ms_redir_apply(t_simple_cmd *cmd, int *save_in, int *save_out)
 {
 	int	in_fd;
 	int	out_fd;
 
-	if (saved_in)
-		*saved_in = dup(STDIN_FILENO);
-	if (saved_out)
-		*saved_out = dup(STDOUT_FILENO);
-	if (saved_in && *saved_in < 0)
+	if (save_in)
+		*save_in = dup(STDIN_FILENO);
+	if (save_out)
+		*save_out = dup(STDOUT_FILENO);
+	if (save_in && *save_in < 0)
 		return (1);
-	if (saved_out && *saved_out < 0)
+	if (save_out && *save_out < 0)
 		return (1);
 	if (ms_redir_collect(cmd, &in_fd, &out_fd) != 0)
 		return (1);

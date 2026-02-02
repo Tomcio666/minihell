@@ -1,18 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.c                                         :+:      :+:    :+:   */
+/*   executor_nodes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 16:59:57 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/02/02 17:18:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx);
 
 static int	node_type_zero(t_ast *node, t_exec_ctx *ctx, pid_t pid)
 {
@@ -41,7 +39,7 @@ static int	node_type_zero(t_ast *node, t_exec_ctx *ctx, pid_t pid)
 	return (1);
 }
 
-static int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
+int	ms_execute_node(t_ast *node, t_exec_ctx *ctx)
 {
 	pid_t	pid;
 

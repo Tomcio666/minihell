@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 18:15:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/18 18:00:02 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/02 17:21:18 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_ast	*ms_ast_new(t_node_type type)
 	return (node);
 }
 
-void	ms_ast_attach_children(t_ast *parent, t_ast *left, t_ast *right)
+void	ms_ast_attach_chld(t_ast *parent, t_ast *left, t_ast *right)
 {
 	if (!parent)
 		return ;
