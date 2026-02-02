@@ -1,25 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executables.c                                      :+:      :+:    :+:   */
+/*   ms_token.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/23 18:36:42 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/02 18:09:36 by tloin            ###   ########.fr       */
+/*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
+/*   Updated: 2026/02/02 17:54:52 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef MS_TOKEN_H
+# define MS_TOKEN_H
 
-int	execute_executable(const char *path, char **argv, t_shell *shell)
-{
-	execve(path, argv, shell->env);
-	if (errno == ENOENT)
-	{
-		ft_putstr_fd("minishell: command not found\n", 2);
-		return (127);
-	}
-	perror(path);
-	return (126);
-}
+# include "ms_types.h"
+
+t_token		*ms_token_new(t_token_type type, const char *value);
+void		ms_token_add_back(t_token **list, t_token *new_node);
+void		ms_token_clear(t_token **list);
+const char	*ms_token_type_name(t_token_type type);
+void		ms_token_debug_print(t_token *list);
+
+#endif

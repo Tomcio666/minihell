@@ -40,7 +40,7 @@ SRCS =	main.c \
 	executor_io.c \
 	executor_process.c \
 	prompt.c \
-	signals.c \
+	signals.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h

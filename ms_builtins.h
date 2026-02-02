@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executables.c                                      :+:      :+:    :+:   */
+/*   ms_builtins.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/23 18:36:42 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/02 18:09:36 by tloin            ###   ########.fr       */
+/*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
+/*   Updated: 2026/02/02 17:54:52 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef MS_BUILTINS_H
+# define MS_BUILTINS_H
 
-int	execute_executable(const char *path, char **argv, t_shell *shell)
-{
-	execve(path, argv, shell->env);
-	if (errno == ENOENT)
-	{
-		ft_putstr_fd("minishell: command not found\n", 2);
-		return (127);
-	}
-	perror(path);
-	return (126);
-}
+# include "ms_types.h"
+
+int	pwd_command(void);
+int	cd_cmd(t_shell *shell, t_simple_cmd *cmd);
+int	echo_cmd(t_simple_cmd *cmd);
+int	env_cmd(t_shell *shell, t_simple_cmd *cmd);
+int	export_cmd(t_shell *shell, t_simple_cmd *cmd);
+int	unset_cmd(t_shell *shell, t_simple_cmd *cmd);
+int	exit_cmd(t_shell *shell, t_simple_cmd *cmd);
+
+#endif

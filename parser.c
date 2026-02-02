@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 16:04:51 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/02 18:01:53 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static t_ast	*ms_parse_subshell(t_parser *parser)
 		ms_ast_clear(&inner);
 		return (NULL);
 	}
-	ms_ast_attach_children(node, inner, NULL);
+	ms_ast_attach_chld(node, inner, NULL);
 	return (node);
 }
 
@@ -77,7 +77,7 @@ static t_ast	*ms_parse_pipeline(t_parser *parser)
 		node = ms_ast_new(NODE_PIPE);
 		if (!node)
 			return (ms_ast_clear(&left), ms_ast_clear(&right), NULL);
-		ms_ast_attach_children(node, left, right);
+		ms_ast_attach_chld(node, left, right);
 		left = node;
 	}
 	return (left);
@@ -106,7 +106,7 @@ static t_ast	*ms_parse_and_or(t_parser *parser)
 			return (ms_ast_clear(&left), NULL);
 		if (!node)
 			return (ms_ast_clear(&left), ms_ast_clear(&right), NULL);
-		ms_ast_attach_children(node, left, right);
+		ms_ast_attach_chld(node, left, right);
 		left = node;
 	}
 	return (left);

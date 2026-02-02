@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executables.c                                      :+:      :+:    :+:   */
+/*   ms_signals.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/23 18:36:42 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/02 18:09:36 by tloin            ###   ########.fr       */
+/*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
+/*   Updated: 2026/02/02 17:54:52 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef MS_SIGNALS_H
+# define MS_SIGNALS_H
 
-int	execute_executable(const char *path, char **argv, t_shell *shell)
-{
-	execve(path, argv, shell->env);
-	if (errno == ENOENT)
-	{
-		ft_putstr_fd("minishell: command not found\n", 2);
-		return (127);
-	}
-	perror(path);
-	return (126);
-}
+# include "ms_types.h"
+
+void	ms_signals_setup(void);
+int		ms_signal_get(void);
+void	ms_signal_clear(void);
+
+#endif
