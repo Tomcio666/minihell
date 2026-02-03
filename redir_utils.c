@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:14:32 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 16:46:34 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/02 18:23:26 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	*ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 
 	while (1)
 	{
-		line = readline("> ");
+		line = readline("heredoc> ");
 		if (!line || !delim)
 			break ;
 		if (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_process.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:00:29 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/02 17:02:04 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/02/03 18:19:07 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int	ms_execute_child(t_ast *node, int in_fd, int out_fd, t_shell *shell)
 	ctx.shell = shell;
 	ctx.in_child = 1;
 	status = ms_execute_node(node, &ctx);
+	ms_ast_clear(&node);
+	local_env_clear(shell);
 	return (status);
 }
 

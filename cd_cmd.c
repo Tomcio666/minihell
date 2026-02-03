@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 17:30:40 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/01/28 15:29:30 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/03 17:09:49 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,18 @@ static int	ms_cd_update_env(t_shell *shell, char *oldpwd)
 	char	*cwd;
 	int		status;
 
+	if (!oldpwd)
+		return (1);
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
+	{
+		free(oldpwd);
 		return (1);
+	}
 	status = ms_env_set(shell, "OLDPWD", oldpwd);
 	status &= ms_env_set(shell, "PWD", cwd);
 	free(cwd);
+	free(oldpwd);
 	if (status == 1)
 		return (0);
 	return (1);

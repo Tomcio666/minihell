@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 17:06:51 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/03 18:19:09 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static int	ms_init_shell(t_shell *shell)
 	shell->env = NULL;
 	shell->user = NULL;
 	shell->last_status = 0;
+	shell->exit_requested = 0;
+	shell->exit_status = 0;
 	load_env(shell);
 	ms_signal_clear();
 	ms_signals_setup();
@@ -56,12 +58,12 @@ static void	ms_process_line(char *buffer, t_shell *shell)
 	if (tokens)
 	{
 		ast = ms_parse(tokens);
+		ms_token_clear(&tokens);
 		if (ast)
 		{
 			shell->last_status = ms_execute_ast(ast, shell);
 			ms_ast_clear(&ast);
 		}
-		ms_token_clear(&tokens);
 	}
 	free(buffer);
 }
@@ -71,22 +73,32 @@ static void	ms_cleanup_shell(t_shell *shell)
 	if (!shell)
 		return ;
 	local_env_clear(shell);
+	rl_clear_history();
 }
 
 int	main(void)
 {
 	char	*buffer;
 	t_shell	shell;
+	int		status;
 
 	if (ms_init_shell(&shell) != 0)
 		return (1);
+	status = 0;
 	while (1)
 	{
 		buffer = ms_read_line(&shell);
 		if (buffer == NULL)
 			break ;
 		ms_process_line(buffer, &shell);
+		if (shell.exit_requested)
+		{
+			status = shell.exit_status;
+			break ;
+		}
 	}
 	ms_cleanup_shell(&shell);
+	if (shell.exit_requested)
+		return (status);
 	return (0);
 }

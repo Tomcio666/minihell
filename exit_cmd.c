@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 18:12:10 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 15:27:59 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/03 18:15:50 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ int	exit_cmd(t_shell *shell, t_simple_cmd *cmd)
 	if (shell)
 		status = shell->last_status;
 	if (shell)
-		local_env_clear(shell);
-	rl_clear_history();
-	exit(status);
-	return (0);
+	{
+		shell->exit_status = status;
+		shell->exit_requested = 1;
+	}
+	return (status);
 }
