@@ -1,27 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_signals.h                                       :+:      :+:    :+:   */
+/*   disable_echoctl.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/05 16:55:42 by mgumienn         ###   ########.fr       */
+/*   Created: 2026/02/05 17:01:49 by mgumienn          #+#    #+#             */
+/*   Updated: 2026/02/05 17:06:32 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MS_SIGNALS_H
-# define MS_SIGNALS_H
+#include "minishell.h"
 
-# ifndef ECHOCTL
-#  define ECHOCTL 0001000
-# endif
+void	disable_echoctl(void)
+{
+	struct termios	term;
 
-# include "ms_types.h"
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
-void	ms_signals_setup(void);
-int		ms_signal_get(void);
-void	ms_signal_clear(void);
-void    disable_echoctl(void);
 
-#endif
