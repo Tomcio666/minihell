@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 10:12:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/05 17:08:34 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/02/08 13:33:48 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,30 @@
 
 static volatile sig_atomic_t	g_signal;
 
-static void	ms_sigint_handler(int sig)
+static void	ms_sig_handler(int sig, siginfo_t *info, void *context)
 {
-	(void)sig;
-	if (rl_readline_state & RL_STATE_READCMD)
+	(void) info;
+	(void) context;
+	if (rl_readline_state & RL_STATE_READCMD && sig == SIGINT)
 	{
-		g_signal = SIGINT;
-		rl_on_new_line();
-		rl_replace_line("^C", 0);
-		rl_redisplay();
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
 		rl_done = 1;
 	}
-}
-
-static void	ms_sigquit_handler(int sig)
-{
-	(void)sig;
-	g_signal = SIGQUIT;
-	if (rl_readline_state & RL_STATE_READCMD)
-	{
-		rl_on_new_line();
-		rl_redisplay();
-	}
+	g_signal = sig;
 }
 
 void	ms_signals_setup(void)
 {
 	struct sigaction	sa;
 
+	sa.sa_sigaction = ms_sig_handler;
+	sa.sa_flags = SA_SIGINFO;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	sa.sa_handler = ms_sigint_handler;
 	sigaction(SIGINT, &sa, NULL);
-	sa.sa_handler = ms_sigquit_handler;
+	sa.sa_handler = SIG_IGN;
 	sigaction(SIGQUIT, &sa, NULL);
 }
 
