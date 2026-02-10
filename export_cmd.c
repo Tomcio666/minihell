@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/17 19:38:54 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/01/28 15:27:38 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/10 16:30:21 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,18 @@ static int	ms_export_assign(t_shell *shell, char *arg)
 
 int	export_cmd(t_shell *shell, t_simple_cmd *cmd)
 {
-	int	index;
-	int	status;
+	int		index;
+	int		status;
+	t_shell	sorted;
 
+	sorted = sort_env(*shell);
 	if (!shell || !shell->env)
 		return (1);
 	if (!cmd || !cmd->argv || !cmd->argv[1])
 	{
 		index = 0;
-		while (shell->env[index])
-			ms_export_print_one(shell->env[index++]);
+		while (sorted.env[index])
+			ms_export_print_one(sorted.env[index++]);
 		return (0);
 	}
 	index = 1;

@@ -40,8 +40,8 @@ SRCS =	main.c \
 	executor_io.c \
 	executor_process.c \
 	prompt.c \
-	signals.c 
-# 	disable_echoctl.c
+	signals.c \
+	sort_env.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h

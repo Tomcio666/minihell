@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_env.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 17:54:52 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/10 16:28:19 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@ char	**get_env(const char *name, t_shell *shell);
 int		ms_env_set(t_shell *shell, const char *name, const char *value);
 int		ms_env_unset(t_shell *shell, const char *name);
 char	*ms_env_join(const char *name, const char *value);
+t_shell	sort_env(t_shell sorted);
 
 #endif
