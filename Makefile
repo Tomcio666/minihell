@@ -41,7 +41,10 @@ SRCS =	main.c \
 	executor_process.c \
 	prompt.c \
 	signals.c \
-	sort_env.c
+	sort_env.c \
+	wildcard.c \
+	wildcard_utils.c \
+	wildcard_sort.c
 
 OBJS = $(SRCS:.c=.o)
 HEADERS = minishell.h

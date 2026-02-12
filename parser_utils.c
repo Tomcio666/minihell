@@ -6,14 +6,14 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/01/28 16:04:51 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/10 18:31:52 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "libft.h"
 
-static char	**ms_argv_add(char **argv, const char *value)
+char	**ms_argv_add(char **argv, const char *value)
 {
 	char	**new_argv;
 	int		count;
@@ -44,15 +44,9 @@ static char	**ms_argv_add(char **argv, const char *value)
 
 int	ms_parser_add_arg(t_simple_cmd *cmd, const char *value)
 {
-	char	**new_argv;
-
 	if (!cmd)
 		return (0);
-	new_argv = ms_argv_add(cmd->argv, value);
-	if (!new_argv)
-		return (0);
-	cmd->argv = new_argv;
-	return (1);
+	return (ms_wildcard_expand(cmd, value));
 }
 
 int	ms_parser_is_redir(t_token_type type)
