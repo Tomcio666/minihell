@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/03 18:15:50 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef struct s_shell
 	char	**env;
 	char	*user;
 	int		last_status;
+	t_ast	*ast;
 	int		exit_requested;
 	int		exit_status;
 }	t_shell;

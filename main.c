@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/10 18:39:06 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static int	ms_init_shell(t_shell *shell)
 	shell->env = NULL;
 	shell->user = NULL;
 	shell->last_status = 0;
+	shell->ast = NULL;
 	shell->exit_requested = 0;
 	shell->exit_status = 0;
 	load_env(shell);
@@ -61,8 +62,10 @@ static void	ms_process_line(char *buffer, t_shell *shell)
 		ms_token_clear(&tokens);
 		if (ast)
 		{
+			shell->ast = ast;
 			shell->last_status = ms_execute_ast(ast, shell);
 			ms_ast_clear(&ast);
+			shell->ast = NULL;
 		}
 	}
 	free(buffer);

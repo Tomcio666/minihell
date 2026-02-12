@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:00:29 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/10 18:11:58 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ int	ms_execute_child(t_ast *node, int in_fd, int out_fd, t_shell *shell)
 	ctx.shell = shell;
 	ctx.in_child = 1;
 	status = ms_execute_node(node, &ctx);
-	ms_ast_clear(&node);
+	if (shell && shell->ast)
+		ms_ast_clear(&shell->ast);
 	local_env_clear(shell);
 	return (status);
 }
