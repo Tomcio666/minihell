@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/28 18:53:45 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static char	*ms_read_line(t_shell *shell)
 	prompt = NULL;
 	if (print_prompt(shell, &prompt) != 0)
 		return (NULL);
+	rl_on_new_line();
 	buffer = readline(prompt);
 	rl_readline_state &= ~RL_STATE_READCMD;
 	free(prompt);
@@ -64,6 +65,11 @@ static void	ms_process_line(char *buffer, t_shell *shell)
 		{
 			shell->ast = ast;
 			shell->last_status = ms_execute_ast(ast, shell);
+			if (ms_signal_get() == SIGINT)
+			{
+				shell->last_status = 130;
+				ms_signal_clear();
+			}
 			ms_ast_clear(&ast);
 			shell->ast = NULL;
 		}

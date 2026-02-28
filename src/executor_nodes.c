@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_nodes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 17:18:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/28 19:32:40 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ static int	node_type_zero(t_ast *node, t_exec_ctx *ctx, pid_t pid)
 	pid = fork();
 	if (pid == 0)
 		_exit(ms_execute_child(node, ctx->in_fd, ctx->out_fd, ctx->shell));
-	waitpid(pid, &status, 0);
+	while (waitpid(pid, &status, 0) == -1 && errno == EINTR)
+		;
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	if (WIFSIGNALED(status))

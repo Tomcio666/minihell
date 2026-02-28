@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:14:32 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 18:23:26 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/28 19:30:28 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,31 @@
 // 	return (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0);
 // }
 
-static int	*ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
+static int	ms_heredoc_event_hook(void)
+{
+	if (ms_signal_get() == SIGINT)
+		rl_done = 1;
+	return (0);
+}
+
+static int	ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 {
 	char	*line;
+	int		interrupted;
 
+	interrupted = 0;
+	ms_heredoc_signal_mode(1);
+	rl_event_hook = ms_heredoc_event_hook;
+	rl_set_keyboard_input_timeout(10000);
 	while (1)
 	{
 		line = readline("heredoc> ");
-		if (!line || !delim)
+		if (!line || !delim || ms_signal_get() == SIGINT)
+		{
+			interrupted = (ms_signal_get() == SIGINT);
+			free(line);
 			break ;
+		}
 		if (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0)
 		{
 			free(line);
@@ -37,12 +53,15 @@ static int	*ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 		write(pipefd[1], "\n", 1);
 		free(line);
 	}
+	rl_event_hook = NULL;
+	rl_set_keyboard_input_timeout(0);
+	ms_heredoc_signal_mode(0);
 	if (save_in >= 0)
 	{
 		dup2(save_in, STDIN_FILENO);
 		close(save_in);
 	}
-	return (pipefd);
+	return (interrupted);
 }
 
 static int	ms_heredoc_fd(const char *delim)
@@ -67,7 +86,12 @@ static int	ms_heredoc_fd(const char *delim)
 		}
 		return (-1);
 	}
-	ms_heredoc_fd_util(delim, pipefd, save_in);
+	if (ms_heredoc_fd_util(delim, pipefd, save_in))
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return (-1);
+	}
 	close(pipefd[1]);
 	return (pipefd[0]);
 }
@@ -105,7 +129,8 @@ int	ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd)
 		fd = ms_redir_open(redir);
 		if (fd < 0)
 		{
-			perror(redir->word);
+			if (ms_signal_get() != SIGINT)
+				perror(redir->word);
 			return (1);
 		}
 		if (redir->kind == REDIR_IN || redir->kind == REDIR_HEREDOC)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_process.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 17:00:29 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
+/*   Updated: 2026/02/28 19:32:40 by mgumienn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,10 @@ int	ms_wait_children(pid_t left_pid, pid_t right_pid)
 	int	status;
 
 	status = 0;
-	waitpid(left_pid, NULL, 0);
-	waitpid(right_pid, &status, 0);
+	while (waitpid(left_pid, NULL, 0) == -1 && errno == EINTR)
+		;
+	while (waitpid(right_pid, &status, 0) == -1 && errno == EINTR)
+		;
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	if (WIFSIGNALED(status))
