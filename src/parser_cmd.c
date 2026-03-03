@@ -36,8 +36,8 @@ static int	ms_add_redir(t_parser *parser, t_simple_cmd *cmd)
 		return (0);
 	if (!ms_parser_expect_word(parser, &word))
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
-			2);
+		ft_putstr_fd("minishell: syntax error near "
+			"unexpected token `newline'\n", 2);
 		return (0);
 	}
 	redir = ms_redir_new(kind, word);

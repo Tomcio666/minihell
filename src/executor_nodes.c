@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_nodes.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/28 19:32:40 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/03/03 17:17:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,29 @@ int	ms_execute_ast(t_ast *node, t_shell *shell)
 	ctx.shell = shell;
 	ctx.in_child = 0;
 	return (ms_execute_node(node, &ctx));
+}
+
+void	ms_run_ast(t_ast *ast, t_shell *shell)
+{
+	shell->ast = ast;
+	shell->last_status = ms_execute_ast(ast, shell);
+	if (ms_signal_get() == SIGINT)
+	{
+		shell->last_status = 130;
+		ms_signal_clear();
+	}
+	ms_ast_clear(&ast);
+	shell->ast = NULL;
+}
+
+void	ms_process_tokens(t_token *tokens, t_shell *shell)
+{
+	t_ast	*ast;
+
+	ast = ms_parse(tokens);
+	ms_token_clear(&tokens);
+	if (ast)
+		ms_run_ast(ast, shell);
+	else
+		shell->last_status = 2;
 }

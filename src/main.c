@@ -46,7 +46,6 @@ static char	*ms_read_line(t_shell *shell)
 static void	ms_process_line(char *buffer, t_shell *shell)
 {
 	t_token	*tokens;
-	t_ast	*ast;
 
 	if (!buffer)
 		return ;
@@ -58,24 +57,7 @@ static void	ms_process_line(char *buffer, t_shell *shell)
 		return (free(buffer));
 	tokens = ms_lexer(buffer, shell);
 	if (tokens)
-	{
-		ast = ms_parse(tokens);
-		ms_token_clear(&tokens);
-		if (ast)
-		{
-			shell->ast = ast;
-			shell->last_status = ms_execute_ast(ast, shell);
-			if (ms_signal_get() == SIGINT)
-			{
-				shell->last_status = 130;
-				ms_signal_clear();
-			}
-			ms_ast_clear(&ast);
-			shell->ast = NULL;
-		}
-		else
-			shell->last_status = 2;
-	}
+		ms_process_tokens(tokens, shell);
 	free(buffer);
 }
 

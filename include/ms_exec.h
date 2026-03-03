@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_exec.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/02 18:04:35 by tloin            ###   ########.fr       */
+/*   Updated: 2026/03/03 17:17:03 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 
 int		ms_execute_node(t_ast *node, t_exec_ctx *ctx);
 int		ms_execute_ast(t_ast *node, t_shell *shell);
+void	ms_run_ast(t_ast *ast, t_shell *shell);
+void	ms_process_tokens(t_token *tokens, t_shell *shell);
 int		execute_executable(const char *path, char **argv, t_shell *shell);
 
 int		ms_has_slash(const char *s);
