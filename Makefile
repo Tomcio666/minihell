@@ -44,6 +44,7 @@ SRCS =	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/executor_process.c \
 	$(SRC_DIR)/prompt.c \
 	$(SRC_DIR)/signals.c \
+	$(SRC_DIR)/signals_heredoc.c \
 	$(SRC_DIR)/sort_env.c \
 	$(SRC_DIR)/wildcard.c \
 	$(SRC_DIR)/wildcard_utils.c \
