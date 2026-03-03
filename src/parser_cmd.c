@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 11:40:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/10 18:37:47 by tloin            ###   ########.fr       */
+/*   Updated: 2026/03/03 17:06:51 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ static int	ms_add_redir(t_parser *parser, t_simple_cmd *cmd)
 	if (!ms_parser_consume(parser, type))
 		return (0);
 	if (!ms_parser_expect_word(parser, &word))
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n",
+			2);
 		return (0);
+	}
 	redir = ms_redir_new(kind, word);
 	if (!redir)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:14 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/28 18:53:45 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/03/03 17:06:51 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ static void	ms_process_line(char *buffer, t_shell *shell)
 			ms_ast_clear(&ast);
 			shell->ast = NULL;
 		}
+		else
+			shell->last_status = 2;
 	}
 	free(buffer);
 }
