@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_heredoc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 16:49:01 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/03/03 16:50:59 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/03/04 17:25:39 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,24 @@ static int	ms_heredoc_event(const char *delim, int *pipefd)
 	return ((ms_signal_get() == SIGINT));
 }
 
+static FILE	*ms_heredoc_tty_out(void)
+{
+	FILE	*tty;
+
+	tty = fopen("/dev/tty", "w");
+	if (tty)
+		rl_outstream = tty;
+	return (tty);
+}
+
 static int	ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 {
 	int		interrupted;
+	FILE	*old_out;
+	FILE	*tty_out;
 
+	old_out = rl_outstream;
+	tty_out = ms_heredoc_tty_out();
 	ms_heredoc_signal_mode(1);
 	rl_event_hook = ms_heredoc_event_hook;
 	rl_set_keyboard_input_timeout(10000);
@@ -54,6 +68,9 @@ static int	ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
 	rl_event_hook = NULL;
 	rl_set_keyboard_input_timeout(0);
 	ms_heredoc_signal_mode(0);
+	rl_outstream = old_out;
+	if (tty_out)
+		fclose(tty_out);
 	if (save_in >= 0)
 	{
 		dup2(save_in, STDIN_FILENO);
