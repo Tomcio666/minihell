@@ -5,4 +5,8 @@ Our implementation of the 42 minishell project.
 - `lexer_test.c`: quick tokenization check using `ms_lexer`.
 - `parser_test.c`: quick AST build check using `ms_parse`.
 
-fix ctrl+\ behaviour
+in heredoc after cntrl + C 
+tloin:~/Desktop/core/minishell$ << a
+heredoc> ^C
+heredoc> 
+tloin:~/Desktop/core/minishell$ 

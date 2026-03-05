@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:14:32 by tloin             #+#    #+#             */
-/*   Updated: 2026/03/03 16:50:30 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/03/05 17:47:11 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static int	ms_redir_open(t_redir *redir)
 		return (open(redir->word, O_CREAT | O_WRONLY | O_TRUNC, 0644));
 	if (redir->kind == REDIR_APPEND)
 		return (open(redir->word, O_CREAT | O_WRONLY | O_APPEND, 0644));
+	if (redir->kind == REDIR_HEREDOC_FD)
+		return (ft_atoi(redir->word));
 	return (ms_heredoc_fd(redir->word));
 }
 
@@ -49,7 +51,8 @@ int	ms_redir_collect(t_simple_cmd *cmd, int *in_fd, int *out_fd)
 				perror(redir->word);
 			return (1);
 		}
-		if (redir->kind == REDIR_IN || redir->kind == REDIR_HEREDOC)
+		if (redir->kind == REDIR_IN || redir->kind == REDIR_HEREDOC
+			|| redir->kind == REDIR_HEREDOC_FD)
 			ms_set_fd(in_fd, fd);
 		else
 			ms_set_fd(out_fd, fd);

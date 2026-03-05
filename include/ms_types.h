@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_types.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tloin <tloin@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 18:05:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/02/12 17:34:55 by tloin            ###   ########.fr       */
+/*   Updated: 2026/03/05 17:46:48 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef enum e_redir_type
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
-	REDIR_HEREDOC
+	REDIR_HEREDOC,
+	REDIR_HEREDOC_FD
 }	t_redir_type;
 
 typedef enum e_node_type

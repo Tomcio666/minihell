@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 12:20:00 by tloin             #+#    #+#             */
-/*   Updated: 2026/03/03 17:17:03 by tloin            ###   ########.fr       */
+/*   Updated: 2026/03/05 17:45:14 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int	ms_execute_ast(t_ast *node, t_shell *shell)
 void	ms_run_ast(t_ast *ast, t_shell *shell)
 {
 	shell->ast = ast;
+	ms_preprocess_heredoc(ast);
 	shell->last_status = ms_execute_ast(ast, shell);
 	if (ms_signal_get() == SIGINT)
 	{

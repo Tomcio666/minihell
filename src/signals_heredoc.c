@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals_heredoc.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mgumienn <mgumienn@student.42warsaw.pl>    +#+  +:+       +#+        */
+/*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 16:55:27 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/03/03 17:04:50 by mgumienn         ###   ########.fr       */
+/*   Updated: 2026/03/05 18:53:38 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ static void	ms_sig_handler_heredoc(int sig, siginfo_t *info, void *context)
 	(void) info;
 	(void) context;
 	if (sig == SIGINT)
+	{
 		rl_done = 1;
+	}
 	ms_signal_set(sig);
 }
 
