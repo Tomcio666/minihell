@@ -6,7 +6,7 @@
 /*   By: tloin <tloin@student.42warsaw.pl>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/03 16:49:01 by mgumienn          #+#    #+#             */
-/*   Updated: 2026/03/05 18:51:08 by tloin            ###   ########.fr       */
+/*   Updated: 2026/03/09 16:52:10 by tloin            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,10 @@ static int	ms_heredoc_event(const char *delim, int *pipefd)
 		line = readline("heredoc> ");
 		if (!line)
 			break ;
-		if (ms_signal_get() == SIGINT)
-		{
-			free(line);
+		if (ms_process_heredoc_line(line, delim, pipefd))
 			break ;
-		}
-		if (!delim)
-		{
-			free(line);
-			break ;
-		}
-		if (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(pipefd[1], line, ft_strlen(line));
-		write(pipefd[1], "\n", 1);
-		free(line);
 	}
-	return ((ms_signal_get() == SIGINT));
+	return (ms_signal_get() == SIGINT);
 }
 
 static int	ms_heredoc_fd_util(const char *delim, int *pipefd, int save_in)
@@ -75,26 +59,12 @@ int	ms_heredoc_fd(const char *delim)
 {
 	int		pipefd[2];
 	int		save_in;
-	int		tty;
 
-	save_in = dup(STDIN_FILENO);
-	tty = open("/dev/tty", O_RDONLY);
-	if (tty >= 0)
-	{
-		dup2(tty, STDIN_FILENO);
-		close(tty);
-	}
+	save_in = ms_setup_heredoc_stdin();
 	if (pipe(pipefd) < 0)
-	{
-		if (save_in >= 0)
-		{
-			dup2(save_in, STDIN_FILENO);
-			close(save_in);
-		}
-		return (-1);
-	}
+		return (ms_restore_stdin_on_error(save_in));
 	if (ms_heredoc_fd_util(delim, pipefd, save_in))
-		return (close(pipefd[0]), close(pipefd[1]), -1);
+		return (ms_cleanup_heredoc_error(pipefd));
 	close(pipefd[1]);
 	return (pipefd[0]);
 }

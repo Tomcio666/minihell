@@ -49,6 +49,7 @@ SRCS =	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/wildcard.c \
 	$(SRC_DIR)/wildcard_utils.c \
 	$(SRC_DIR)/redir_heredoc.c \
+	$(SRC_DIR)/redir_heredoc_utils.c \
 	$(SRC_DIR)/pre_heredoc.c \
 	$(SRC_DIR)/wildcard_sort.c
 
