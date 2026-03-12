@@ -34,7 +34,7 @@ The implementation focuses on:
   - `echo` (supports `-n`)
   - `cd` (relative or absolute path)
   - `pwd`
-  - `export` (no options)
+  - `export` (with arguments)
   - `unset` (no options)
   - `env` (no options/arguments)
   - `exit` (no options)
@@ -65,13 +65,8 @@ This builds the `minishell` binary in the repository root.
 ./minishell
 ```
 
-Notes:
-- The script uses `.readline.supp` to suppress known `readline`-related leaks (allowed by the subject).
-- Your own code should remain leak-free.
-
 ## Resources
-- **42 subject**: `en.subject (1).pdf`
-- **Bash manual**: `man bash`
+- **42 subject**: `minishell`
 - **GNU Readline**: `man readline`
 - **Process & exec**: `man fork`, `man execve`, `man waitpid`
 - **Pipes & redirections**: `man pipe`, `man dup2`, `man open`
@@ -80,5 +75,6 @@ Notes:
 ### AI usage
 AI was used to:
 - draft and restructure this `README.md` based on the project subject requirements and the current codebase
+- research
 
 No AI-generated code was copy-pasted into the implementation without full understanding and manual review.
